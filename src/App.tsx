@@ -200,7 +200,7 @@ export default function App() {
   // UI States
   const [yesSelected, setYesSelected] = useState(false);
   const [noAttempts, setNoAttempts] = useState(0);
-  const [noButtonPos, setNoButtonPos] = useState({ x: 80, y: 0 });
+  const [noButtonPos, setNoButtonPos] = useState({ x: 0, y: 0 });
   const [noDisappeared, setNoDisappeared] = useState(false);
   const [lastAttemptTime, setLastAttemptTime] = useState(0);
   const [selectedActivity, setSelectedActivity] = useState<string>('Surprise me! 🎁');
@@ -590,63 +590,66 @@ export default function App() {
               </p>
 
               {/* Button Container */}
-              <div className="flex items-center justify-center gap-6 w-full relative h-20">
-                
-                {/* YES BUTTON (Pulses gently) */}
-                <motion.button
-                  onClick={handleYesClick}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.95 }}
-                  animate={{
-                    scale: [1, 1.05, 1],
-                  }}
-                  transition={{
-                    scale: {
-                      repeat: Infinity,
-                      duration: 1.5,
-                      ease: "easeInOut",
-                    }
-                  }}
-                  className="px-8 py-4 bg-gradient-to-r from-pink-500 to-rose-500 text-white font-extrabold text-lg rounded-2xl shadow-lg hover:shadow-pink-300/50 active:scale-95 transition-all duration-200 cursor-pointer min-w-[130px] -translate-x-16"
-                >
-                  Yes! 💖
-                </motion.button>
+              <div className="flex items-center justify-center gap-4 w-full relative h-20">
+                {/* Left side container for Yes button */}
+                <div className="w-[140px] flex justify-center z-10">
+                  <motion.button
+                    onClick={handleYesClick}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
+                    animate={{
+                      scale: [1, 1.05, 1],
+                    }}
+                    transition={{
+                      scale: {
+                        repeat: Infinity,
+                        duration: 1.5,
+                        ease: "easeInOut",
+                      }
+                    }}
+                    className="px-8 py-4 bg-gradient-to-r from-pink-500 to-rose-500 text-white font-extrabold text-lg rounded-2xl shadow-lg hover:shadow-pink-300/50 active:scale-95 transition-all duration-200 cursor-pointer min-w-[130px]"
+                  >
+                    Yes! 💖
+                  </motion.button>
+                </div>
 
-                {/* NO BUTTON (Evading forcefield & Floating) */}
-                <AnimatePresence>
-                  {!noDisappeared && (
-                    <motion.div
-                      ref={noButtonRef}
-                      style={{ x: noButtonPos.x, y: noButtonPos.y }}
-                      exit={{
-                        y: -500,
-                        opacity: 0,
-                        scale: 0.4,
-                        transition: { duration: 1.2, ease: "easeIn" },
-                      }}
-                      transition={{ type: "spring", stiffness: 220, damping: 17 }}
-                      className="touch-none select-none z-20 absolute"
-                    >
-                      <motion.button
-                        type="button"
-                        onClick={handleNoTrigger}
-                        onPointerDown={handleNoTrigger}
-                        animate={noAttempts < 5 ? {
-                          y: [0, -6, 5, -5, 0],
-                          x: [0, 5, -4, 4, 0],
-                        } : {}}
-                        transition={{
-                          repeat: Infinity,
-                          duration: 5.5,
-                          ease: "easeInOut",
+                {/* Right side container for No button */}
+                <div className="w-[130px] flex justify-center items-center relative h-full">
+                  <AnimatePresence>
+                    {!noDisappeared && (
+                      <motion.div
+                        ref={noButtonRef}
+                        style={{ x: noButtonPos.x, y: noButtonPos.y }}
+                        exit={{
+                          y: -500,
+                          opacity: 0,
+                          scale: 0.4,
+                          transition: { duration: 1.2, ease: "easeIn" },
                         }}
-                        className="px-6 py-3.5 bg-white/90 text-gray-500 font-extrabold text-md rounded-2xl border border-pink-100 shadow-md min-w-[110px] cursor-pointer"
+                        transition={{ type: "spring", stiffness: 220, damping: 17 }}
+                        className="touch-none select-none z-20 absolute"
                       >
-                        No 😢
-                      </motion.button>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                        <motion.button
+                          type="button"
+                          onClick={handleNoTrigger}
+                          onPointerDown={handleNoTrigger}
+                          animate={noAttempts < 5 ? {
+                            y: [0, -6, 5, -5, 0],
+                            x: [0, 5, -4, 4, 0],
+                          } : {}}
+                          transition={{
+                            repeat: Infinity,
+                            duration: 5.5,
+                            ease: "easeInOut",
+                          }}
+                          className="px-6 py-3.5 bg-white/90 text-gray-500 font-extrabold text-md rounded-2xl border border-pink-100 shadow-md min-w-[110px] cursor-pointer"
+                        >
+                          No 😢
+                        </motion.button>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
               </div>
             </motion.div>
           ) : (

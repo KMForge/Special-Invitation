@@ -714,7 +714,7 @@ export default function App() {
 
         {/* Small branding or cute tag at bottom */}
         <div className="mt-5 text-[10px] font-bold text-pink-400/80 tracking-widest uppercase">
-          Made with Love & Anti-Gravity 🪐
+          Made with Love🪐
         </div>
       </div>
     </div>

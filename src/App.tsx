@@ -200,7 +200,7 @@ export default function App() {
   // UI States
   const [yesSelected, setYesSelected] = useState(false);
   const [noAttempts, setNoAttempts] = useState(0);
-  const [noButtonPos, setNoButtonPos] = useState({ x: 0, y: 0 });
+  const [noButtonPos, setNoButtonPos] = useState({ x: 80, y: 0 });
   const [noDisappeared, setNoDisappeared] = useState(false);
   const [lastAttemptTime, setLastAttemptTime] = useState(0);
   const [selectedActivity, setSelectedActivity] = useState<string>('Surprise me! 🎁');
@@ -386,6 +386,62 @@ export default function App() {
     return () => window.removeEventListener('pointermove', handlePointerMove);
   }, [noButtonPos, yesSelected, noDisappeared, lastAttemptTime]);
 
+  // Mobile / Click direct evasion trigger
+  const handleNoTrigger = () => {
+    if (yesSelected || noDisappeared) return;
+
+    // Muted mode protection: if music is not playing, do not evade
+    if (!isMusicPlaying) {
+      const now = Date.now();
+      if (now - lastAttemptTime > 1000) {
+        setLastAttemptTime(now);
+        setNoAttempts((prev) => prev + 1);
+      }
+      return;
+    }
+
+    if (!noButtonRef.current || !containerRef.current) return;
+
+    const button = noButtonRef.current;
+    const container = containerRef.current;
+
+    const buttonRect = button.getBoundingClientRect();
+    const containerRect = container.getBoundingClientRect();
+
+    const now = Date.now();
+    setLastAttemptTime(now);
+    setNoAttempts((prev) => {
+      const next = prev + 1;
+      if (next >= 5) {
+        setTimeout(() => {
+          setNoDisappeared(true);
+        }, 400);
+      }
+      return next;
+    });
+
+    // Select a random target position inside the container boundaries
+    const padding = 20;
+    const minX = containerRect.left + buttonRect.width / 2 + padding;
+    const maxX = containerRect.right - buttonRect.width / 2 - padding;
+    const minY = containerRect.top + buttonRect.height / 2 + padding;
+    const maxY = containerRect.bottom - buttonRect.height / 2 - padding;
+
+    // Generate random target coordinates
+    const targetBx = Math.random() * (maxX - minX) + minX;
+    const targetBy = Math.random() * (maxY - minY) + minY;
+
+    // Derive initial center relative to viewport by subtracting current relative positions
+    const bxInitial = (buttonRect.left + buttonRect.width / 2) - noButtonPos.x;
+    const byInitial = (buttonRect.top + buttonRect.height / 2) - noButtonPos.y;
+
+    // Set target translate values
+    setNoButtonPos({
+      x: targetBx - bxInitial,
+      y: targetBy - byInitial,
+    });
+  };
+
   // Yes Celebration Confetti Storm
   const handleYesClick = () => {
     setYesSelected(true);
@@ -551,7 +607,7 @@ export default function App() {
                       ease: "easeInOut",
                     }
                   }}
-                  className="px-8 py-4 bg-gradient-to-r from-pink-500 to-rose-500 text-white font-extrabold text-lg rounded-2xl shadow-lg hover:shadow-pink-300/50 active:scale-95 transition-all duration-200 cursor-pointer min-w-[130px]"
+                  className="px-8 py-4 bg-gradient-to-r from-pink-500 to-rose-500 text-white font-extrabold text-lg rounded-2xl shadow-lg hover:shadow-pink-300/50 active:scale-95 transition-all duration-200 cursor-pointer min-w-[130px] -translate-x-16"
                 >
                   Yes! 💖
                 </motion.button>
@@ -573,6 +629,8 @@ export default function App() {
                     >
                       <motion.button
                         type="button"
+                        onClick={handleNoTrigger}
+                        onPointerDown={handleNoTrigger}
                         animate={noAttempts < 5 ? {
                           y: [0, -6, 5, -5, 0],
                           x: [0, 5, -4, 4, 0],

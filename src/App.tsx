@@ -496,7 +496,7 @@ export default function App() {
     return "Oops! It floated away! 🎈";
   };
 
-  const MESSENGER_USERNAME = 'your.username'; // Replace with your Messenger/Facebook username
+  const MESSENGER_USERNAME = 'K3nttttmchlslbga'; // Replace with your Messenger/Facebook username
   const getMessengerLink = () => {
     const text = `Yes! I would love to go on a date with you! 💖 I select: ${selectedActivity} ✨`;
     return `https://m.me/${MESSENGER_USERNAME}?text=${encodeURIComponent(text)}`;
